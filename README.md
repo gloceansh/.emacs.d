@@ -1,8 +1,6 @@
 # 🪷 Glocean's .emacs.d
 
 A minimal, high performance emacs configuration with full LSP support and org mode
-> [!IMPORTANT] 
-> This config was made with macOS in mind, you *will* encounter issues on other platforms.
 
 <img alt="Dashboard" src="assets/dashboard.png" />
 
