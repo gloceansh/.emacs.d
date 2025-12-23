@@ -1,0 +1,8 @@
+# Ignore everything in the root directory
+/*
+
+# Unignore specific files/folders
+!.gitignore
+!init.el
+!early-init.el
+!assets/
