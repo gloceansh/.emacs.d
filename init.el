@@ -230,6 +230,26 @@
   (doom-modeline-buffer-file-name-style 'relative-from-project)
   (doom-modeline-project-name t))
 
+;; Brainrot
+(use-package brainrot
+  :straight (brainrot :type git :host github :repo "gloceansh/brainrot.el"
+                      :files ("*.el" "boom.ogg" "images" "phonks"))
+  :custom
+  ;; Duration of the phonk in seconds, set to 0 to disable or a high number to play the full length
+  (brainrot-phonk-duration 2.5)
+  
+  ;; How long errors must exist before a fix triggers the phonk
+  (brainrot-min-error-duration 0.5)
+  
+  ;; Volume for the vine boom (0-100)
+  (brainrot-boom-volume 50)
+  
+  ;; Volume for the phonk (0-100)
+  (brainrot-phonk-volume 50)
+  
+  :config
+  (brainrot-mode 1))
+
 ;; -----------------------------------------------------------------------------
 ;; COMPLETION AND SEARCHING
 ;; -----------------------------------------------------------------------------
@@ -310,8 +330,6 @@
 
 ;; Consult for enhanced searching
 (use-package consult)
-
-
 
 ;; -----------------------------------------------------------------------------
 ;; DEVELOPMENT TOOLS AND UTILITIES
@@ -565,9 +583,9 @@
       (save-excursion
         (setq dap-ui--locals-timer nil)
         (lsp-treemacs-wcb-unless-killed dap-ui--locals-buffer
-                                        (lsp-treemacs-generic-update (dap-ui-locals-get-data))
-                                        (when (eq dap-ui-locals-expand-depth t)
-                                          (my/dap-ui-expand-all-nodes))))
+          (lsp-treemacs-generic-update (dap-ui-locals-get-data))
+          (when (eq dap-ui-locals-expand-depth t)
+            (my/dap-ui-expand-all-nodes))))
       (run-with-timer 0 nil #'my/dap-ui-scroll-locals-to-top))))
 
 ;; -----------------------------------------------------------------------------
@@ -852,8 +870,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
-;; Brainrot
-(use-package posframe)
-(add-to-list 'load-path (expand-file-name "brainrot" user-emacs-directory))
-(require 'brainrot)
