@@ -31,10 +31,6 @@ brew install git enchant aspell automake autoconf pkg-config poppler zlib libvte
 
 # Font, you can skip this if you have installed it another way already
 brew install font-jetbrains-mono-nerd-font
-
-# Java 21, newer versions will most likely break the debugger
-brew install openjdk@21
-sudo ln -sfn /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-21.jdk
 ```
 ## Installation
 
