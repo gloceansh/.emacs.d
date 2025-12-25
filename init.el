@@ -231,24 +231,16 @@
   (doom-modeline-project-name t))
 
 ;; Brainrot
-(use-package brainrot
-  :straight (brainrot :type git :host github :repo "gloceansh/brainrot.el"
-                      :files ("*.el" "boom.ogg" "images" "phonks"))
-  :custom
-  ;; Duration of the phonk in seconds, set to 0 to disable or a high number to play the full length
-  (brainrot-phonk-duration 2.5)
-  
-  ;; How long errors must exist before a fix triggers the phonk
-  (brainrot-min-error-duration 0.5)
-  
-  ;; Volume for the vine boom (0-100)
-  (brainrot-boom-volume 50)
-  
-  ;; Volume for the phonk (0-100)
-  (brainrot-phonk-volume 50)
-  
-  :config
-  (brainrot-mode 1))
+;; (use-package brainrot
+;;   :straight (brainrot :type git :host github :repo "gloceansh/brainrot.el"
+;;                       :files ("*.el" "boom.ogg" "images" "phonks"))
+;;   :custom
+;;   (brainrot-phonk-duration 2.5)
+;;   (brainrot-min-error-duration 0.5)
+;;   (brainrot-boom-volume 50)
+;;   (brainrot-phonk-volume 50)
+;;   :config
+;;   (brainrot-mode 1))
 
 ;; -----------------------------------------------------------------------------
 ;; COMPLETION AND SEARCHING
