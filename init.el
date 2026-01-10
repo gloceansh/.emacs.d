@@ -191,6 +191,7 @@
                           (projects . 5)
                           (agenda   . 5)))
   :custom
+  (dashboard-week-agenda nil)
   (dashboard-center-content t)
   (dashboard-vertically-center-content t)
   (dashboard-set-heading-icons t)
