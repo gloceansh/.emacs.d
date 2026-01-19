@@ -192,6 +192,7 @@
                           (agenda   . 5)))
   :custom
   (dashboard-week-agenda nil)
+  (dashboard-agenda-sort-strategy '(time-up))
   (dashboard-center-content t)
   (dashboard-vertically-center-content t)
   (dashboard-set-heading-icons t)
@@ -576,9 +577,9 @@
       (save-excursion
         (setq dap-ui--locals-timer nil)
         (lsp-treemacs-wcb-unless-killed dap-ui--locals-buffer
-          (lsp-treemacs-generic-update (dap-ui-locals-get-data))
-          (when (eq dap-ui-locals-expand-depth t)
-            (my/dap-ui-expand-all-nodes))))
+                                        (lsp-treemacs-generic-update (dap-ui-locals-get-data))
+                                        (when (eq dap-ui-locals-expand-depth t)
+                                          (my/dap-ui-expand-all-nodes))))
       (run-with-timer 0 nil #'my/dap-ui-scroll-locals-to-top))))
 
 ;; -----------------------------------------------------------------------------
@@ -591,6 +592,7 @@
   :config
   (setq org-directory "~/University")
   (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-preview-latex-image-directory (expand-file-name "ltximg/" user-emacs-directory))
 
   ;; This function updates the agenda list by finding all .org files in Current
   (defun my/update-agenda-files ()
@@ -605,10 +607,26 @@
   (setq org-ellipsis ""
         org-hide-emphasis-markers t
         org-pretty-entities t
+        org-startup-with-latex-preview nil
         org-auto-align-tags nil
         org-tags-column 0
         org-catch-invisible-edits 'show-and-error
         org-insert-heading-respect-content t)
+
+  ;; Manual Latex preview for daemon compatibility
+  (defun my/org-enable-latex-preview ()
+    "Enable latex preview if in a graphical environment."
+    (when (display-graphic-p)
+      (org-latex-preview '(16))))
+
+  (add-hook 'org-mode-hook #'my/org-enable-latex-preview)
+
+  (add-hook 'server-after-make-frame-hook
+            (lambda ()
+              (dolist (buf (buffer-list))
+                (with-current-buffer buf
+                  (when (eq major-mode 'org-mode)
+                    (org-latex-preview '(16)))))))
 
   ;; TODOs and Logging
   (setq org-todo-keywords
@@ -626,10 +644,22 @@
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setq org-agenda-current-time-string
         "◄ NOW ─────────────────────────────────────────────────")
-  
+
   ;; Automatically continue lists with when pressing RET
   (use-package org-autolist
     :hook (org-mode . org-autolist-mode))
+
+  ;; Automatically toggle org-mode latex previews
+  (use-package org-fragtog
+    :hook (org-mode . org-fragtog-mode))
+
+  ;; Toggle emphasis markers when the cursor is over them
+  (use-package org-appear
+    :hook (org-mode . org-appear-mode)
+    :config
+    (setq org-appear-autoemphasis t
+          org-appear-autosubmarkers t
+          org-appear-autolinks t))
 
   ;; Modern look for org-mode
   (use-package org-modern
@@ -642,27 +672,6 @@
     (setq org-modern-todo-faces
           '(("WAIT" :background "#6e6a86" :foreground "#e0def4")
             ("PROJ" :background "#c4a7e7" :foreground "#191724")))))
-
-;; Center the content for a better reading experience
-(use-package visual-fill-column
-  :hook (org-mode . visual-fill-column-mode)
-  :config
-  (setq-default visual-fill-column-width 100
-                visual-fill-column-center-text t))
-
-;; PDF Tools for reading slides
-(use-package pdf-tools
-  :defer t
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :config
-  (pdf-tools-install :no-query)
-  (setq pdf-view-display-size 'fit-page)
-  (setq pdf-view-use-scaling t)
-  (setq pdf-view-use-imagemagick nil))
-
-;; Integrate PDF Tools with Org (e.g. for linking to specific pages)
-(use-package org-pdftools
-  :hook (org-mode . org-pdftools-setup-link))
 
 ;; -----------------------------------------------------------------------------
 ;; KEYBINDINGS
