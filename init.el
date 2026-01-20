@@ -688,6 +688,7 @@
   (add-hook 'org-mode-hook (lambda ()
                              (visual-line-mode 1)
                              (display-line-numbers-mode -1)
+                             (setq-local global-hl-line-mode nil)
                              (hl-line-mode -1)))
 ;; -----------------------------------------------------------------------------
 ;; KEYBINDINGS
