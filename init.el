@@ -673,6 +673,9 @@
           '(("WAIT" :background "#6e6a86" :foreground "#e0def4")
             ("PROJ" :background "#c4a7e7" :foreground "#191724")))))
 
+;; Enable visual line mode for org mode
+(add-hook 'org-mode-hook 'visual-line-mode)
+
 ;; -----------------------------------------------------------------------------
 ;; KEYBINDINGS
 ;; -----------------------------------------------------------------------------
