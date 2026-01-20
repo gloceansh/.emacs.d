@@ -124,6 +124,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-undo-system 'undo-fu)
   (setq evil-want-integration t)
+  (setq evil-respect-visual-line-mode t)
   :config
   (evil-mode 1)
   (define-key evil-normal-state-map (kbd "SPC") nil)
@@ -594,6 +595,9 @@
   (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-preview-latex-image-directory (expand-file-name "ltximg/" user-emacs-directory))
 
+  ;; Use dvisvgm for high-quality SVG previews
+  (setq org-preview-latex-default-process 'dvisvgm)
+  
   ;; This function updates the agenda list by finding all .org files in Current
   (defun my/update-agenda-files ()
     (interactive)
@@ -671,11 +675,20 @@
     (setq org-modern-table-horizontal 0.2)
     (setq org-modern-todo-faces
           '(("WAIT" :background "#6e6a86" :foreground "#e0def4")
-            ("PROJ" :background "#c4a7e7" :foreground "#191724")))))
+            ("PROJ" :background "#c4a7e7" :foreground "#191724"))))
 
-;; Enable visual line mode for org mode
-(add-hook 'org-mode-hook 'visual-line-mode)
+  ;; Center the content for a better reading experience
+  (use-package visual-fill-column
+    :hook (org-mode . visual-fill-column-mode)
+    :config
+    (setq-default visual-fill-column-width 100
+                  visual-fill-column-center-text t)))
 
+  ;; Enable visual line mode and disable line numbers for org mode
+  (add-hook 'org-mode-hook (lambda ()
+                             (visual-line-mode 1)
+                             (display-line-numbers-mode -1)
+                             (hl-line-mode -1)))
 ;; -----------------------------------------------------------------------------
 ;; KEYBINDINGS
 ;; -----------------------------------------------------------------------------
