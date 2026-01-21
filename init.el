@@ -188,12 +188,10 @@
                                    (hl-line-mode -1)))
   (setq dashboard-startup-banner (expand-file-name "assets/xemacs_color_pine.svg" user-emacs-directory)
         dashboard-banner-logo-title "Welcome to Emacs!"
-        dashboard-items '((recents  . 5)
-                          (projects . 5)
-                          (agenda   . 5)))
+        dashboard-items '((recents   . 5)
+                          (projects  . 5)
+                          (bookmarks . 5)))
   :custom
-  (dashboard-week-agenda nil)
-  (dashboard-agenda-sort-strategy '(time-up))
   (dashboard-center-content t)
   (dashboard-vertically-center-content t)
   (dashboard-set-heading-icons t)
@@ -325,6 +323,26 @@
 
 ;; Consult for enhanced searching
 (use-package consult)
+
+;; Custom function to toggle bookmarks for a file
+(defun my/toggle-file-bookmark ()
+  "Toggle a bookmark for the current file."
+  (interactive)
+  (require 'bookmark)
+  (bookmark-maybe-load-default-file)
+  (let ((curr-file (buffer-file-name)))
+    (if (not curr-file)
+        (message "Not visiting a file.")
+      (let ((name (file-name-nondirectory curr-file)))
+        (if (bookmark-get-bookmark name t)
+            (progn
+              (bookmark-delete name)
+              (message "Deleted bookmark: %s" name))
+          (save-excursion
+            (goto-char (point-min))
+            (bookmark-set name)
+            (bookmark-set-filename name (expand-file-name curr-file))
+            (message "Set bookmark: %s" name)))))))
 
 ;; -----------------------------------------------------------------------------
 ;; DEVELOPMENT TOOLS AND UTILITIES
@@ -684,12 +702,12 @@
     (setq-default visual-fill-column-width 100
                   visual-fill-column-center-text t)))
 
-  ;; Enable visual line mode and disable line numbers for org mode
-  (add-hook 'org-mode-hook (lambda ()
-                             (visual-line-mode 1)
-                             (display-line-numbers-mode -1)
-                             (setq-local global-hl-line-mode nil)
-                             (hl-line-mode -1)))
+;; Enable visual line mode and disable line numbers for org mode
+(add-hook 'org-mode-hook (lambda ()
+                           (visual-line-mode 1)
+                           (display-line-numbers-mode -1)
+                           (setq-local global-hl-line-mode nil)
+                           (hl-line-mode -1)))
 ;; -----------------------------------------------------------------------------
 ;; KEYBINDINGS
 ;; -----------------------------------------------------------------------------
@@ -738,6 +756,7 @@
   ;; Buffer Management
   "b"   '(:ignore t :which-key "Buffer")
   "bb"  '(consult-buffer :which-key "Switch Buffer")
+  "bm"  '(consult-bookmark :which-key "Jump to Bookmark")
   "bk"  '(kill-current-buffer :which-key "Kill Buffer")
   "bn"  '(next-buffer :which-key "Next Buffer")
   "bp"  '(previous-buffer :which-key "Prev Buffer")
@@ -767,6 +786,7 @@
 
   ;; Toggle
   "t"   '(:ignore t :which-key "Toggle")
+  "tb"  '(my/toggle-file-bookmark :which-key "Toggle File Bookmark")
   "tt"  '(vterm-toggle-cd :which-key "Toggle VTerm")
   "te"  '(treemacs :which-key "File Explorer")
   "tl"  '(display-line-numbers-mode :which-key "Toggle Line Numbers")
