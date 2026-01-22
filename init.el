@@ -73,6 +73,7 @@
 ;; Auto-revert buffers when files change on disk (useful for Syncthing)
 (global-auto-revert-mode 1)
 (setq global-auto-revert-non-file-buffers t)
+(global-visual-line-mode 1)
 
 ;; macOS specific fixes
 (setq locate-command "mdfind") ; Use spotlight's search backend
@@ -476,6 +477,26 @@
   (require 'smartparens-config)
   (show-paren-mode 1))
 
+;; IRC Client
+(use-package circe
+  :hook (circe-chat-mode . (lambda ()
+                             (display-line-numbers-mode -1)
+                             (setq-local global-hl-line-mode nil)
+                             (hl-line-mode -1)))
+  :config
+  (setq circe-network-options
+        '(("Libera Chat"
+           :tls t
+           :nick "Glocean"
+           :user "Glocean"
+           :realname "Glass Ocean"
+           :sasl-username "Glocean"
+           :sasl-password (lambda (&rest _)
+                            (funcall (plist-get (car (auth-source-search
+                                                      :host "irc.libera.chat"
+                                                      :user "Glocean"))
+                                                :secret)))))))
+
 ;; -----------------------------------------------------------------------------
 ;; LANGUAGES AND CODING
 ;; -----------------------------------------------------------------------------
@@ -665,46 +686,50 @@
           (800 1000 1200 1400 1600 1800 2000)
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setq org-agenda-current-time-string
-        "◄ NOW ─────────────────────────────────────────────────")
+        "◄ NOW ─────────────────────────────────────────────────"))
 
-  ;; Automatically continue lists with when pressing RET
-  (use-package org-autolist
-    :hook (org-mode . org-autolist-mode))
+;; Automatically continue lists with when pressing RET
+(use-package org-autolist
+  :after org
+  :hook (org-mode . org-autolist-mode))
 
-  ;; Automatically toggle org-mode latex previews
-  (use-package org-fragtog
-    :hook (org-mode . org-fragtog-mode))
+;; Automatically toggle org-mode latex previews
+(use-package org-fragtog
+  :after org
+  :hook (org-mode . org-fragtog-mode))
 
-  ;; Toggle emphasis markers when the cursor is over them
-  (use-package org-appear
-    :hook (org-mode . org-appear-mode)
-    :config
-    (setq org-appear-autoemphasis t
-          org-appear-autosubmarkers t
-          org-appear-autolinks t))
+;; Toggle emphasis markers when the cursor is over them
+(use-package org-appear
+  :after org
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t
+        org-appear-autosubmarkers t
+        org-appear-autolinks t))
 
-  ;; Modern look for org-mode
-  (use-package org-modern
-    :hook ((org-mode . org-modern-mode)
-           (org-agenda-finalize . org-modern-agenda))
-    :config
-    (setq org-modern-star '("◉" "○" "◈" "◇" "✳"))
-    (setq org-modern-table-vertical 1)
-    (setq org-modern-table-horizontal 0.2)
-    (setq org-modern-todo-faces
-          '(("WAIT" :background "#6e6a86" :foreground "#e0def4")
-            ("PROJ" :background "#c4a7e7" :foreground "#191724"))))
+;; Modern look for org-mode
+(use-package org-modern
+  :after org
+  :hook ((org-mode . org-modern-mode)
+         (org-agenda-finalize . org-modern-agenda))
+  :config
+  (setq org-modern-star '("◉" "○" "◈" "◇" "✳"))
+  (setq org-modern-table-vertical 1)
+  (setq org-modern-table-horizontal 0.2)
+  (setq org-modern-todo-faces
+        '(("WAIT" :background "#6e6a86" :foreground "#e0def4")
+          ("PROJ" :background "#c4a7e7" :foreground "#191724"))))
 
-  ;; Center the content for a better reading experience
-  (use-package visual-fill-column
-    :hook (org-mode . visual-fill-column-mode)
-    :config
-    (setq-default visual-fill-column-width 100
-                  visual-fill-column-center-text t)))
+;; Center the content for a better reading experience
+(use-package visual-fill-column
+  :hook ((org-mode . visual-fill-column-mode)
+         (circe-chat-mode . visual-fill-column-mode))
+  :config
+  (setq-default visual-fill-column-width 100
+                visual-fill-column-center-text t))
 
 ;; Enable visual line mode and disable line numbers for org mode
 (add-hook 'org-mode-hook (lambda ()
-                           (visual-line-mode 1)
                            (display-line-numbers-mode -1)
                            (setq-local global-hl-line-mode nil)
                            (hl-line-mode -1)))
@@ -873,7 +898,7 @@
  '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "#c4a7e7"))))
  '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "#ebbcba"))))
  '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "#9ccfd8"))))
- '(org-level-4 ((t (:inherit outline-4 :extend nil :foreground "#31748f"))))
+ '(org-level-4 ((t (:extend nil :foreground "#31748f"))))
  '(org-level-6 ((t (:inherit outline-6 :extend nil :foreground "#f6c177"))))
  '(org-level-7 ((t (:inherit outline-7 :extend nil :foreground "#908caa"))))
  '(org-level-8 ((t (:inherit outline-8 :extend nil :foreground "#524f67"))))
