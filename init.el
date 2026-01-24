@@ -83,10 +83,6 @@
       mac-mouse-wheel-smooth-scroll nil) ; Smooth scrolling fixes
 (setq delete-by-moving-to-trash (not noninteractive)) ; Delete files to the macOS trashcan
 
-(with-eval-after-load 'auth-source
-  (add-to-list 'auth-sources 'macos-keychain-internet)
-  (add-to-list 'auth-sources 'macos-keychain-generic)) ; Keychain integration
-
 ;; Shell fixes
 (setq shell-file-name (executable-find "bash")) ; Make emacs use bash internally
 (setq-default vterm-shell "/opt/homebrew/bin/fish") ; Use fish for vterm
@@ -478,24 +474,36 @@
   (show-paren-mode 1))
 
 ;; IRC Client
-(use-package circe
-  :hook (circe-chat-mode . (lambda ()
+(use-package erc
+  :custom
+  (erc-server "irc.libera.chat")
+  (erc-nick "Glocean")
+  (erc-user-full-name "Glass Ocean")
+  (erc-track-shorten-start 8)
+  (erc-kill-buffer-on-part t)
+  (erc-auto-query 'bury)
+  (erc-fill-column 100)
+  (erc-fill-function 'erc-fill-static)
+  (erc-fill-static-center 20)
+  (erc-header-line-format "%n on %t (%m)")
+  (erc-hide-list '("JOIN" "PART" "QUIT"))
+  :config
+  (add-to-list 'erc-modules 'spelling)
+  (add-to-list 'erc-modules 'scrolltobottom)
+  (erc-update-modules)
+  
+  (evil-set-initial-state 'erc-mode 'emacs)
+
+  (add-hook 'erc-mode-hook (lambda ()
                              (display-line-numbers-mode -1)
                              (setq-local global-hl-line-mode nil)
-                             (hl-line-mode -1)))
+                             (hl-line-mode -1)
+                             (visual-fill-column-mode))))
+
+(use-package erc-hl-nicks
+  :after erc
   :config
-  (setq circe-network-options
-        '(("Libera Chat"
-           :tls t
-           :nick "Glocean"
-           :user "Glocean"
-           :realname "Glass Ocean"
-           :sasl-username "Glocean"
-           :sasl-password (lambda (&rest _)
-                            (funcall (plist-get (car (auth-source-search
-                                                      :host "irc.libera.chat"
-                                                      :user "Glocean"))
-                                                :secret)))))))
+  (erc-hl-nicks-mode 1))
 
 ;; -----------------------------------------------------------------------------
 ;; LANGUAGES AND CODING
@@ -722,8 +730,7 @@
 
 ;; Center the content for a better reading experience
 (use-package visual-fill-column
-  :hook ((org-mode . visual-fill-column-mode)
-         (circe-chat-mode . visual-fill-column-mode))
+  :hook ((org-mode . visual-fill-column-mode))
   :config
   (setq-default visual-fill-column-width 100
                 visual-fill-column-center-text t))
@@ -777,6 +784,10 @@
   "r"   '(my/quickrun-in-vterm :which-key "Run Code")
   "e"   '(treemacs :which-key "File Explorer")
   "k"   '(jinx-correct :which-key "Correct Word")
+
+  ;; Apps
+  "a"   '(:ignore t :which-key "Apps")
+  "ae"  '((lambda () (interactive) (erc-tls :server "irc.libera.chat" :port 6697 :nick "Glocean")) :which-key "ERC (Libera)")
 
   ;; Buffer Management
   "b"   '(:ignore t :which-key "Buffer")
@@ -879,6 +890,12 @@
  '(doom-modeline-bar ((t (:background "#c4a7e7"))))
  '(doom-modeline-debug-visual ((t (:inherit doom-modeline :foreground "#eb6f92"))))
  '(doom-modeline-highlight ((t (:inherit mode-line-highlight :foreground "#191724"))))
+ '(erc-direct-msg-face ((t (:foreground "#9ccfd8"))))
+ '(erc-input-face ((t (:foreground "#c4a7e7"))))
+ '(erc-my-nick-face ((t (:foreground "#c4a7e7" :weight bold))))
+ '(erc-notice-face ((t (:foreground "#6e6a86" :weight semi-bold))))
+ '(erc-prompt-face ((t (:foreground "#c4a7e7" :weight bold))))
+ '(erc-timestamp-face ((t (:foreground "#f6c177" :weight bold))))
  '(evil-goggles--pulse-face ((t (:background "#eb6f92" :foreground "#191724"))) t)
  '(evil-goggles-change-face ((t (:background "#f6c177" :foreground "#191724"))))
  '(evil-goggles-delete-face ((t (:background "#eb6f92" :foreground "#191724"))))
