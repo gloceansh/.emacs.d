@@ -301,6 +301,8 @@
   (corfu-popupinfo-delay 0)
   :bind
   (:map corfu-map
+        ("TAB" . nil)
+        ("[tab]" . nil)
         ("S-RET" . (lambda () (interactive) (corfu-quit) (newline-and-indent)))
         ("S-<return>" . (lambda () (interactive) (corfu-quit) (newline-and-indent)))))
 
@@ -471,7 +473,11 @@
   (smartparens-global-mode 1)
   :config
   (require 'smartparens-config)
-  (show-paren-mode 1))
+  (show-paren-mode 1)
+  (sp-local-pair 'org-mode "$" "$")
+  (sp-local-pair 'org-mode "$$" "$$")
+  (sp-local-pair 'org-mode "\\(" "\\)")
+  (sp-local-pair 'org-mode "\\[" "\\]"))
 
 ;; IRC Client
 (use-package erc
@@ -537,13 +543,6 @@
 ;; Pre-made yasnippet collections
 (use-package yasnippet-snippets
   :after yasnippet)
-
-;; Bridge between yasnippet and cape
-(use-package yasnippet-capf
-  :straight (:host github :repo "elken/yasnippet-capf")
-  :after (yasnippet cape)
-  :config
-  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
 
 ;; Spellcheck with linx
 (use-package jinx
@@ -656,6 +655,7 @@
 
   ;; Modern appearance settings
   (setq org-ellipsis ""
+        org-cycle-hide-drawer-startup nil
         org-hide-emphasis-markers t
         org-pretty-entities t
         org-startup-with-latex-preview nil
@@ -734,6 +734,22 @@
   :config
   (setq-default visual-fill-column-width 100
                 visual-fill-column-center-text t))
+
+;; Powerful LaTeX editing environment
+(use-package auctex
+  :defer t
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-master nil))
+
+;; Fast LaTeX math entry
+(use-package cdlatex
+  :hook ((org-mode . turn-on-org-cdlatex)
+         (LaTeX-mode . turn-on-cdlatex))
+  :config
+  ;; Disable yasnippet in org-mode to avoid conflicts with cdlatex TAB binding
+  (add-hook 'org-mode-hook (lambda () (yas-minor-mode -1))))
 
 ;; Enable visual line mode and disable line numbers for org mode
 (add-hook 'org-mode-hook (lambda ()
