@@ -474,10 +474,7 @@
   :config
   (require 'smartparens-config)
   (show-paren-mode 1)
-  (sp-local-pair 'org-mode "$" "$")
-  (sp-local-pair 'org-mode "$$" "$$")
-  (sp-local-pair 'org-mode "\\(" "\\)")
-  (sp-local-pair 'org-mode "\\[" "\\]"))
+  (sp-local-pair 'org-mode "$" "$"))
 
 ;; IRC Client
 (use-package erc
@@ -635,8 +632,15 @@
 
 ;; Main org configuration
 (use-package org
-  :hook (org-mode . org-indent-mode)
+  :hook ((org-mode . org-indent-mode)
+         (org-mode . (lambda () (electric-indent-local-mode -1))))
   :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (java . t)))
+
+  (setq org-adapt-indentation nil)
   (setq org-directory "~/University")
   (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-preview-latex-image-directory (expand-file-name "ltximg/" user-emacs-directory))
@@ -657,12 +661,17 @@
   (setq org-ellipsis ""
         org-cycle-hide-drawer-startup nil
         org-hide-emphasis-markers t
-        org-pretty-entities t
+        org-pretty-entities nil
+        org-use-sub-superscripts nil
         org-startup-with-latex-preview nil
         org-auto-align-tags nil
         org-tags-column 0
         org-catch-invisible-edits 'show-and-error
-        org-insert-heading-respect-content t)
+        org-insert-heading-respect-content t
+        org-src-fontify-natively t
+        org-src-tab-acts-natively t
+        org-edit-src-content-indentation 0
+        org-src-preserve-indentation t)
 
   ;; Manual Latex preview for daemon compatibility
   (defun my/org-enable-latex-preview ()
@@ -724,6 +733,7 @@
   (setq org-modern-star '("◉" "○" "◈" "◇" "✳"))
   (setq org-modern-table-vertical 1)
   (setq org-modern-table-horizontal 0.2)
+  (setq org-modern-block-fringe nil)
   (setq org-modern-todo-faces
         '(("WAIT" :background "#6e6a86" :foreground "#e0def4")
           ("PROJ" :background "#c4a7e7" :foreground "#191724"))))
@@ -749,7 +759,19 @@
          (LaTeX-mode . turn-on-cdlatex))
   :config
   ;; Disable yasnippet in org-mode to avoid conflicts with cdlatex TAB binding
-  (add-hook 'org-mode-hook (lambda () (yas-minor-mode -1))))
+  (add-hook 'org-mode-hook (lambda () (yas-minor-mode -1)))
+  (add-to-list 'cdlatex-command-alist
+               '("lim" "Limit n to infinity"
+                 "\\lim\\limits_{n \\to \\infty} ?"
+                 cdlatex-position-cursor nil nil t))
+  (add-to-list 'cdlatex-command-alist
+               '("neglim" "Limit n to minus infinity"
+                 "\\lim\\limits_{n \\to -\\infty} ?"
+                 cdlatex-position-cursor nil nil t))
+  (add-to-list 'cdlatex-command-alist
+               '("funclim" "Function limit"
+                 "\\lim\\limits_{x \\to ?}"
+                 cdlatex-position-cursor nil nil t)))
 
 ;; Enable visual line mode and disable line numbers for org mode
 (add-hook 'org-mode-hook (lambda ()
@@ -928,6 +950,7 @@
  '(mode-line-buffer-id ((t (:foreground "#c4a7e7" :weight bold))))
  '(mode-line-highlight ((t (:background "#c4a7e7" :foreground "#1f1d2e"))))
  '(mouse-drag-and-drop-region ((t (:inherit region :background "#403d52" :foreground "#e0def4"))))
+ '(org-block ((t (:inherit shadow :extend t :foreground "#e0def4"))))
  '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "#c4a7e7"))))
  '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "#ebbcba"))))
  '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "#9ccfd8"))))
