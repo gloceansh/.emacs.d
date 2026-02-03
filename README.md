@@ -29,6 +29,9 @@ You can install all you need with homebrew on macOS:
 # Core tools
 brew install git enchant aspell automake autoconf pkg-config poppler zlib libvterm cmake
 
+# For LaTeX, this is a giant package (about 6GB) so skip if you won't use it
+brew install mactex
+
 # Font, you can skip this if you have installed it another way already
 brew install font-jetbrains-mono-nerd-font
 ```
