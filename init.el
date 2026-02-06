@@ -27,6 +27,7 @@
 ;; Make straight.el work with use-package
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
+(setq straight-check-for-modifications '(not-at-startup))
 
 ;; -----------------------------------------------------------------------------
 ;; DIRECTORY CLEANUP WITH NO-LITTERING
@@ -557,6 +558,13 @@
   :config
   (setq flycheck-global-modes '(not emacs-lisp-mode)))
 
+;; AI assistant with gptel
+(use-package gptel
+  :config
+  (setq-default gptel-model 'gpt-5-mini)
+  (setq-default gptel-backend
+                (gptel-make-gh-copilot "Copilot")))
+
 ;; Language server support
 (use-package lsp-mode
   :hook (
@@ -890,6 +898,13 @@
   "cf"  '(lsp-format-buffer :which-key "Format Buffer")
   "cQ"  '(lsp-workspace-restart :which-key "Restart LSP Server")
 
+  ;; GPTel
+  "g"   '(:ignore t :which-key "GPTel")
+  "gg"  '(gptel-send :which-key "Send")
+  "gc"  '(gptel :which-key "Chat")
+  "gr"  '(gptel-rewrite :which-key "Rewrite")
+  "gm"  '(gptel-menu :which-key "Menu")
+
   ;; Debugger
   "d"   '(:ignore t :which-key "Debug")
   "dd"  '(dap-debug :which-key "Start Debugging")
@@ -941,6 +956,10 @@
  '(evil-goggles-paste-face ((t (:background "#9ccfd8" :foreground "#191724"))))
  '(evil-goggles-yank-face ((t (:background "#c4a7e7" :foreground "#191724"))))
  '(font-lock-comment-face ((t (:foreground "#908caa"))))
+ '(gptel-context-deletion-face ((t (:extend t :background "#eb6f92"))))
+ '(gptel-context-highlight-face ((t (:extend t :background "#26233a"))))
+ '(gptel-response-highlight ((t (:background "#1f1d2e" :foreground "#e0def4"))))
+ '(gptel-rewrite-highlight-face ((t (:background "#403d52" :foreground "#9ccfd8"))))
  '(highlight ((t (:background "#403d52" :foreground "#e0def4"))))
  '(highlight-indent-guides-character-face ((t (:background "#191724" :foreground "#403d52"))))
  '(highlight-indent-guides-top-character-face ((t (:background "#191724" :foreground "#908caa"))))
