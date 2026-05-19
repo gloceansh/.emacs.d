@@ -158,14 +158,7 @@
 ;; Autothemer, dependency for the rose pine theme
 (use-package autothemer)
 
-;; Old theme (konrad1977/pinerose-emacs) — replaced, no dawn variant and required too many overrides
-;; (use-package rose-pine-theme
-;;   :straight (rose-pine-theme :type git :host github :repo "konrad1977/pinerose-emacs")
-;;   :config
-;;   (load-theme 'rose-pine t))
-
-;; Rose Pine theme — thongpv87/rose-pine-emacs, all three variants, comprehensive face coverage
-;; Dark: rose-pine-color  Moon: rose-pine-moon  Light: rose-pine-dawn
+;; Rose Pine theme
 (use-package rose-pine-color-theme
   :straight (rose-pine-color-theme :type git :host github :repo "thongpv87/rose-pine-emacs"
                                    :files ("*.el")))
@@ -883,7 +876,7 @@
            :target (file+head "%<%Y-%m-%d>.org"
                               "#+title: %<%A, %d %B %Y>\n#+filetags: :daily:\n\n")))))
 
-;; Graph UI — opens in browser
+;; Graph UI
 (use-package org-roam-ui
   :after org-roam
   :custom
@@ -1045,8 +1038,7 @@
   "dK"  '(dap-ui-repl :which-key "REPL"))
 
 ;; -----------------------------------------------------------------------------
-;; THEME SWITCHING — Rose Pine (dark) / Rose Pine Dawn (light)
-;; Follows macOS system appearance automatically via ns-system-appearance-change-functions
+;; THEME SWITCHING AND FACE CUSTOMIZATION
 ;; -----------------------------------------------------------------------------
 
 ;; Safely set a face — skips faces that haven't been defined yet (package not loaded)
@@ -1056,8 +1048,8 @@
 
 (defun my/apply-dark-faces ()
   (my/safe-set-face 'default nil
-                      :background "#191724" :foreground "#e0def4"
-                      :height 140 :family "JetBrainsMono Nerd Font")
+                    :background "#191724" :foreground "#e0def4"
+                    :height 140 :family "JetBrainsMono Nerd Font")
   (my/safe-set-face 'breakpoint-disabled nil :foreground "#eb6f92")
   (my/safe-set-face 'button nil :foreground "#c4a7e7")
   (my/safe-set-face 'comint-highlight-prompt nil :background "#191724" :foreground "#c4a7e7")
@@ -1170,8 +1162,8 @@
 
 (defun my/apply-dawn-faces ()
   (my/safe-set-face 'default nil
-                      :background "#faf4ed" :foreground "#575279"
-                      :height 140 :family "JetBrainsMono Nerd Font")
+                    :background "#faf4ed" :foreground "#575279"
+                    :height 140 :family "JetBrainsMono Nerd Font")
   (my/safe-set-face 'breakpoint-disabled nil :foreground "#b4637a")
   (my/safe-set-face 'button nil :foreground "#907aa9")
   (my/safe-set-face 'comint-highlight-prompt nil :background "#faf4ed" :foreground "#907aa9")
